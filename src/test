@@ -1,0 +1,32 @@
+c(erlst),
+{ok,A} = erlst:launch(),
+Acc1 = erlst:open_account(A,{0,[]}),
+Acc2 = erlst:open_account(A,{0,[]}),
+{ok,OfferId} = erlst:make_offer(Acc2,{"a",0}),
+Trader1 = erlst:add_trader(Acc1,fun({"a", Price}) when Price =< 100 -> accept; (_) -> reject end),
+erlst:make_offer(Acc1,{"a",50}).
+erlst:show(A).
+{Accounts,Offers,Traders} = erlst:show(A).
+[Trader] = Traders.
+Map_Reses = erlst:run_all_traders(Offers,Traders).
+[Map_Res] = Map_Reses.
+
+
+c(erlst).
+{ok,A} = erlst:launch().
+Acc3 = erlst:open_account(A,{2000,[]}).
+Acc4 = erlst:open_account(A,{1000,[]}).
+{ok,OfferId2} = erlst:make_offer(Acc4,{a,50}).
+Trader2 = erlst:add_trader(Acc4,fun({a, Price}) when Price =< 100 -> accept; (_) -> reject end).
+erlst:make_offer(Acc3,{"a",50}).
+erlst:show(A).
+
+E = erlst.
+{ok, S} = E:launch().
+Seller = E:open_account(S, {1000, [{ "Haskell",3}, {"Erlang Inc",5}]}).
+Buyer = E:open_account(S, {2000, []}).
+SellerHoldings = E:account_balance(Seller).
+BuyerHoldings = E:account_balance(Buyer).
+{ok, OfferID} = E:make_offer(Seller, {"Haskell", 50}).
+E:add_trader(Buyer, fun({Stock, ISK}) -> if (Stock == "Haskell" andalso ISK < 100) -> accept; true -> reject end end).
+{Accounts, Offers, Traders, 0} = E:show(S)
